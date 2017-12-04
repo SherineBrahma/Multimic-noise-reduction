@@ -36,6 +36,8 @@ t = (0:L-1)*T;              % Time vector
 Sc = fft(sc);
 Sr = fft(sr);
 
+%stupid edit
+
 
 if (1) %overall plot
     
@@ -78,7 +80,7 @@ end;
 cursor_in = 300*step_len;
 
 %% DISPLAY THE 'BREAK' COMMAND TO EXIT THE FOLLOWING 'WHILE' LOOP
-DlgH = figure;
+DlgH = figure(2);
 H = uicontrol('Style', 'PushButton', ...
                     'String', 'Break', ...
                     'Callback', 'delete(gcbf)');
