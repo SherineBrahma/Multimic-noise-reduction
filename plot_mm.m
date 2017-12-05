@@ -1,3 +1,5 @@
+clear all;
+
 %% CONSTANTS
 
 % sampling information
@@ -36,8 +38,6 @@ t = (0:L-1)*T;              % Time vector
 Sc = fft(sc);
 Sr = fft(sr);
 
-%stupid edit
-
 
 if (1) %overall plot
     
@@ -54,28 +54,25 @@ if (1) %overall plot
     xlabel('t (seconds)')
     ylabel('Sr(t)')
 
-    P_seg_Sc = abs(Sc/L);
-    P_seg_Sc = P_seg_Sc(1:floor(L/2)+1); %only the right side of the FFT is selected
-    P_seg_Sc(2:end-1) = 2*P_seg_Sc(2:end-1); %the amplitudes are amplified by a factor 2
-
-    f = Fs*(0:(L/2))/L;
+    PSc = coeffToMagnitudes(Sc);
+    f = Fs*(1:(L/2)-1)/L;
+    %f = Fs*(0:(L-1))/L;
 
     subplot(2,2,3)
-    plot(f,P_seg_Sc,'r') 
+    plot(f,PSc,'r') 
     title('Single-Sided Amplitude Spectrum of pc(t)')
     xlabel('f (Hz)')
     ylabel('|PSc(f)|')
 
-    PSr = abs(Sr/L);
-    PSr = PSr(1:floor(L/2)+1); %only the right side of the FFT is selected
-    PSr(2:end-1) = 2*PSr(2:end-1); %the amplitudes are amplified by a factor 2
-
+    PSr = coeffToMagnitudes(Sr);
+    
     subplot(2,2,4);
     plot(f,PSr, 'b') 
     title('Single-Sided Amplitude Spectrum of pr(t)')
     xlabel('f (Hz)')
     ylabel('|PSr(f)|')
-end;
+end
+
 
 cursor_in = 300*step_len;
 
@@ -91,8 +88,8 @@ while (cursor_in < (length(sc)-win_len-step_len)) && ishandle(H) % fragment plot
     %n = win_len %look at 20e-3 window
     ts = cursor_in;
     te = ( ts : ts+win_len-1)';    
-    time_seg_sc = sc(cursor_in:(cursor_in+win_len-1)); 
-    time_seg_sr = sr(cursor_in:(cursor_in+win_len-1)); 
+    time_seg_sc = sc(ts:(ts+win_len-1)); 
+    time_seg_sr = sr(ts:(ts+win_len-1)); 
     
     
     subplot(2,2,1)
@@ -110,37 +107,38 @@ while (cursor_in < (length(sc)-win_len-step_len)) && ishandle(H) % fragment plot
     ylabel('sr(t)')
                                
     %fft
-    f_seg_sc = fft(time_seg_sc.*win);
     
-    P_seg_Sc = abs(f_seg_sc/L);
-    P_seg_Sc = P_seg_Sc(1:floor(win_len/2)); %only the right side of the FFT is selected
-    P_seg_Sc(2:end-1) = 2*P_seg_Sc(2:end-1); %the amplitudes are amplified by a factor 2
 
-    f = (Fs*(0:(win_len/2 -1))/win_len )';
+    f_seg_sc = fft(time_seg_sc.*win);
+    Ps = coeffToMagnitudes(f_seg_sc);
+    f = Fs*(0:(length(Ps)-1));
+    
     subplot(2,2,3)
-    semilogx(f,P_seg_Sc, 'r')
-    axis([-inf inf 0 2e-3])
+    plot(f,Ps, 'r')
+    axis([-inf inf 0 2]);
     title('FFT of windowed sc(t)')
     xlabel('f (Hz)')
     ylabel('Sc(f)')
     
     f_seg_sr = fft(time_seg_sr.*win);
+    Pr = coeffToMagnitudes(f_seg_sr);
     
-    P_seg_Sr = abs(f_seg_sr/L);
-    P_seg_Sr = P_seg_Sr(1:floor(win_len/2)); %only the right side of the FFT is selected
-    P_seg_Sr(2:end-1) = 2*P_seg_Sr(2:end-1); %the amplitudes are amplified by a factor 2
-
-    f = (Fs*(0:(win_len/2 -1))/win_len )';
+    
     subplot(2,2,4)
-    semilogx(f,P_seg_Sr, 'b')
-    axis([-inf inf 0 2e-3])
-    title('FFT of windowed sr(t)')
+    semilogx(f,Pr, 'b')
+    axis([-inf inf 0 2])
+    title('FFT of windowed rr(t)')
     xlabel('f (Hz)')
     ylabel('Sr(f)')
     
     cursor_in = cursor_in+step_len;
-    pause(0.2);
+    pause(0.05);
 end
 
-clc
-close all;
+
+function y = coeffToMagnitudes(x) % size(y) = size(x)/2
+    L = length(x);
+    y = abs(x/L);
+    y = y(1:floor(L/2)-1); %only the right side of the FFT is selected
+    y = 2*y; %the amplitudes are amplified by a factor 2
+end
