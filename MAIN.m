@@ -29,10 +29,9 @@ s = idft(S, Fs);
 %% PLOT OR PlAY
 
 %time plot
-t = (1:length(sig_clean))*T;
-figure;
-plot(t,sig_clean, 'r');
-hold on
+% t = (1:length(sig_clean))*T;
+% figure;
+% plot(t,sig_clean, 'r');
 
 % frequency plot
 % Yavg = mean(S,2);
@@ -44,8 +43,7 @@ hold on
 
 %% ERRORS
 
-sig_clean = sig_clean(1 : length(s) );
-abs_s = mod(sig_clean, 2);
+sig_clean = sig_clean(1 : length(s') );
 err = (sig_clean - s'); % error due to the STFT
-t = (1:length(err))*T;
+t = (1:(length(err)))*T;
 plot(t, err)
