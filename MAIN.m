@@ -29,14 +29,16 @@ s = idft(S, Fs);
 %% PLOT OR PlAY
 
 %time plot
-% t = (1:length(sig_clean))*T;
-% figure;
-% plot(t,sig_clean, 'r');
+t = (1:length(s))*T;
+figure;
+plot(t,s, 'b');
+title('Clean signal')
 
 % frequency plot
 % Yavg = mean(S,2);
 % Py = abs(Yavg);
 % x = T*(1:length(Py));
+% figure
 % plot(x,Py)
 
 % sound( s (10e3:100e3), Fs)
@@ -46,4 +48,6 @@ s = idft(S, Fs);
 sig_clean = sig_clean(1 : length(s') );
 err = (sig_clean - s'); % error due to the STFT
 t = (1:(length(err)))*T;
+figure
 plot(t, err)
+title('Error');
