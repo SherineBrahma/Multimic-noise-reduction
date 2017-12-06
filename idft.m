@@ -8,4 +8,5 @@ function x = idft(X,Fs)
     nfft = win_length;    
     
     x = istft(X, win_length, overlap, nfft, Fs);
+    x = x.'; 
 end
